@@ -48,6 +48,9 @@ Board.prototype.isOver = function () {
 };
 
 Board.prototype.dropToken = function (col, token) {
+
+  // debugger;
+
   if (!this.isEmptyCol(col)) {
     throw new MoveError("Not an empty column!");
   }

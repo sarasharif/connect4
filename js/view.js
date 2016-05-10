@@ -12,12 +12,15 @@ View.prototype.bindEvents = function () {
   this.$el.on("click", "li", (function (clicker) {
     var $slot = $(clicker.currentTarget);
     this.makeMove($slot);
+
   }).bind(this));
 };
 
 View.prototype.makeMove = function ($slot) {
-  var pos = $slot.data("col");
+  // debugger;
+  var col = $slot.data("col");
   var currentPlayer = this.game.currentPlayer;
+
 
   try {
     this.game.playMove(col);
@@ -48,19 +51,20 @@ View.prototype.makeMove = function ($slot) {
 
 
 View.prototype.setupBoard = function () {
-  var $ul = $("<ul>");
-  $ul.addClass("group");
 
   for (var colIdx = 0; colIdx < 7; colIdx++) {
-    for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
-      var $li = $("<li>");
-      $li.data("col", [colIdx, rowIdx]);
+    var $ul = $("<ul>");
 
-      $ul.append($li);
-    }
+    $ul.data("col", colIdx);
+
+      for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
+        var $li = $("<li>");
+        $li.data("col", [colIdx, rowIdx]);
+
+        $ul.append($li);
+      }
+    this.$el.append($ul);
   }
-
-  this.$el.append($ul);
 };
 
 
