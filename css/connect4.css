@@ -1,0 +1,59 @@
+html, body, figure, figcaption, ul, li, h1 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: inherit;
+}
+
+h1 {
+  display: none;
+  font-family: sans-serif;
+  font-size: 77px;
+  text-align: center;
+}
+
+li {
+  background-color: lightgray;
+  display: inline-block;
+  border: 5px solid white;
+  height: 100px;
+  width: 100px;
+  float: left;
+}
+
+
+li:hover {
+  background-color: darkcyan;
+  /*background-color: lightpink;*/
+
+}
+
+ul {
+  padding-top: 5%;
+  margin: auto;
+  position: relative;
+  width: 770px;
+}
+
+.red, .blue {
+  /*position: absolute;*/
+  /*bottom: 50%;*/
+  background-color: darkgray;
+  text-align: center;
+  color: white;
+  font-family: sans-serif;
+  font-size: 160px;
+}
+
+body {
+  position: relative;
+}
+
+/*.restart {
+  background-color: teal;
+  margin: auto;
+  float: left;
+  position: relative;
+  width: 340px;
+}*/
