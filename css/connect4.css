@@ -20,20 +20,21 @@ li {
   height: 100px;
   width: 100px;
   float: left;
+  z-index: 4;
 }
 
 
-li:hover {
-  background-color: darkcyan;
+ul:hover * {
+  box-shadow: 10px 10px 5px #888888;
   /*background-color: lightpink;*/
 
 }
 
 ul {
   padding-top: 5%;
-  margin: auto;
   position: relative;
-  width: 100px;
+  float: left;
+  width: 110px;
 }
 
 .blue {

@@ -10,15 +10,15 @@ var View = function (game, $el) {
 
 View.prototype.bindEvents = function () {
   this.$el.on("click", "li", (function (clicker) {
-    var $slot = $(clicker.currentTarget);
-    this.makeMove($slot);
+    var $col = $(clicker.currentTarget).parent();
+    this.makeMove($col);
 
   }).bind(this));
 };
 
-View.prototype.makeMove = function ($slot) {
+View.prototype.makeMove = function ($col) {
   // debugger;
-  var col = $slot.data("col");
+  var col = $col.data("col");
   var currentPlayer = this.game.currentPlayer;
 
 
@@ -29,7 +29,8 @@ View.prototype.makeMove = function ($slot) {
     return;
   }
 
-  $slot.addClass(currentPlayer);
+  var $slot = $col.find("li.empty").last();
+  $slot.removeClass("empty").addClass(currentPlayer);
 
   if (this.game.isOver()) {
     this.$el.off("click");
@@ -60,6 +61,7 @@ View.prototype.setupBoard = function () {
       for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
         var $li = $("<li>");
         $li.data("col", [colIdx, rowIdx]);
+        $li.addClass("empty");
 
         $ul.append($li);
       }
