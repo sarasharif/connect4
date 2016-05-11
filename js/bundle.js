@@ -76,25 +76,26 @@
 	  }).bind(this));
 	};
 	
-	View.prototype.bindResetEvent = function () {
+	View.prototype.bindResetEvent = function (winner) {
 	  this.$el.on("click", "li", (function (clicker) {
-	    this.resetGame();
+	    this.resetGame(winner);
 	  }).bind(this));
 	
-	  this.$el.on("click", "ul", (function (clicker) {
-	    this.resetGame();
-	  }).bind(this));
-	
-	  this.$el.on("click", "h1", (function (clicker) {
-	    this.resetGame();
-	  }).bind(this));
+	  // this.$el.on("click", "ul", (function (clicker) {
+	  //   this.resetGame();
+	  // }).bind(this));
+	  //
+	  // this.$el.on("click", "h1", (function (clicker) {
+	  //   this.resetGame();
+	  // }).bind(this));
 	
 	};
 	
-	View.prototype.resetGame = function() {
-	  var winner = this.game.winner()[0];
+	View.prototype.resetGame = function(winner) {
 	  this.$el.removeClass("winner-" + winner);
-	  this.$el.prev().removeClass("winner-" + winner)
+	  this.$el.prev().removeClass("winner-" + winner);
+	  this.$el.children("div").remove();
+	  winner = null;
 	  this.$el.off("click");
 	  this.game = new Game();
 	  this.setupBoard();
@@ -112,6 +113,28 @@
 	    return;
 	  }
 	
+	  this.finishMove($col, "human", currentPlayer);
+	
+	};
+	
+	View.prototype.makeAImove = function () {
+	  // this.$el.off("click");
+	
+	
+	  var col = Math.floor(Math.random() * 7);
+	  var currentPlayer = this.game.currentPlayer;
+	  var $col = $("ul[col='"+ col +"']");
+	
+	  try {
+	    this.game.playMove(col);
+	  } catch (e) {
+	    this.makeAImove();
+	  }
+	
+	  this.finishMove($col, "computer", currentPlayer);
+	};
+	
+	View.prototype.finishMove = function ($col, user, currentPlayer) {
 	  var $slots = $col.find("li.empty");
 	  this.dropToken($slots, currentPlayer);
 	
@@ -131,9 +154,19 @@
 	      $("li[pos='"+ winSeq[3] +"']").addClass("winners");
 	    }
 	
-	    this.bindResetEvent();
+	    this.bindResetEvent(winner);
+	
+	  } else {
+	    if (user === "human") {
+	      setTimeout(this.makeAImove.bind(this), 700);
+	    } else {
+	      return;
+	      // setTimeout(this.bindEvents.bind(this), 500);
+	    }
 	  }
+	
 	};
+	
 	
 	View.prototype.dropToken = function ($slots, currentPlayer) {
 	  var $currentSlot = $slots.first();
