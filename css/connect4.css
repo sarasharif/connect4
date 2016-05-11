@@ -17,13 +17,13 @@ h1 {
 
 h1.winner-red {
   color: firebrick;
-  font-weight: bold;
+  font-weight: 700;
 
 }
 
 h1.winner-blue {
   color: cadetblue;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 li {
