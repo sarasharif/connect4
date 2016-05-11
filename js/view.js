@@ -16,6 +16,32 @@ View.prototype.bindEvents = function () {
   }).bind(this));
 };
 
+View.prototype.bindResetEvent = function () {
+  this.$el.on("click", "li", (function (clicker) {
+    this.resetGame();
+  }).bind(this));
+
+  this.$el.on("click", "ul", (function (clicker) {
+    this.resetGame();
+  }).bind(this));
+
+  this.$el.on("click", "h1", (function (clicker) {
+    this.resetGame();
+  }).bind(this));
+
+};
+
+View.prototype.resetGame = function() {
+  var winner = this.game.winner()[0];
+  this.$el.removeClass("winner-" + winner);
+  this.$el.prev().removeClass("winner-" + winner)
+  this.$el.off("click");
+  this.game = new Game();
+  this.setupBoard();
+  this.bindEvents();
+};
+
+
 View.prototype.makeMove = function ($col) {
   var col = $col.data("col");
   var currentPlayer = this.game.currentPlayer;
@@ -24,7 +50,6 @@ View.prototype.makeMove = function ($col) {
   try {
     this.game.playMove(col);
   } catch (e) {
-    alert("invalid move! Try again");
     return;
   }
 
@@ -34,17 +59,16 @@ View.prototype.makeMove = function ($col) {
 
   if (this.game.isOver()) {
     this.$el.off("click");
-    this.$el.addClass("game-over");
-
 
     var winner = this.game.winner()[0];
     var winSeq = this.game.winner()[1];
 
     if (winner) {
-      // debugger;
       this.$el.addClass("winner-" + winner);
       this.$el.prev().addClass("winner-" + winner);
     }
+
+    this.bindResetEvent();
   }
 };
 
