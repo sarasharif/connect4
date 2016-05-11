@@ -155,7 +155,10 @@ Board.prototype.winner = function () {
     for (var i = 0; i < posSeqs.length; i++) {
       var winner = this.winnerHelper(posSeqs[i]);
       if (winner !== null) {
-        return [winner, posSeqs[i]];
+        winSeq = posSeqs[i].map(function(tuple) {
+          return tuple.toString();
+        });
+        return [winner, winSeq];
       }
     }
   return null;

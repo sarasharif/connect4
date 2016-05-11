@@ -43,9 +43,8 @@ View.prototype.resetGame = function() {
 
 
 View.prototype.makeMove = function ($col) {
-  var col = $col.data("col");
+  var col = $col.attr("col");
   var currentPlayer = this.game.currentPlayer;
-
 
   try {
     this.game.playMove(col);
@@ -53,7 +52,6 @@ View.prototype.makeMove = function ($col) {
     return;
   }
 
-  var $slot = $col.find("li.empty").last();
   var $slots = $col.find("li.empty");
   this.dropToken($slots, currentPlayer);
 
@@ -66,6 +64,11 @@ View.prototype.makeMove = function ($col) {
     if (winner) {
       this.$el.addClass("winner-" + winner);
       this.$el.prev().addClass("winner-" + winner);
+
+      $("li[pos='"+ winSeq[0] +"']").addClass("winners");
+      $("li[pos='"+ winSeq[1] +"']").addClass("winners");
+      $("li[pos='"+ winSeq[2] +"']").addClass("winners");
+      $("li[pos='"+ winSeq[3] +"']").addClass("winners");
     }
 
     this.bindResetEvent();
@@ -93,20 +96,15 @@ View.prototype.setupBoard = function () {
 
   var $div = $("<div>");
   $div.addClass("board");
-
     for (var colIdx = 0; colIdx < 7; colIdx++) {
       var $ul = $("<ul>");
-
-      $ul.data("col", colIdx);
-
+      $ul.attr("col", colIdx);
         for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
           var $li = $("<li>");
-          $li.data("pos", [colIdx, rowIdx]);
+          $li.attr("pos", [colIdx, rowIdx]);
           $li.addClass("empty");
-
           $ul.append($li);
         }
-
       $div.append($ul);
     }
     this.$el.append($div);

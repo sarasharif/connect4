@@ -61,14 +61,14 @@ ul {
   box-shadow: inset 0 0 40px rgba(99, 99, 99, 1)
 }
 
-.winner-red .red {
-  /*background-color: dimgray;*/
-  box-shadow: inset 0 0 60px rgba(10, 10, 10, 1)
+.winner-red .winners {
+  background-color: firebrick;
+  box-shadow: inset 0 0 90px rgba(10, 10, 10, 1)
 }
 
-.winner-blue .blue {
-  /*background-color: dimgray;*/
-  box-shadow: inset 0 0 60px rgba(10, 10, 10, 1)
+.winner-blue .winners {
+  background-color: cadetblue;
+  box-shadow: inset 0 0 90px rgba(10, 10, 10, 1)
 }
 
 .board {
