@@ -77,7 +77,6 @@
 	};
 	
 	View.prototype.makeMove = function ($col) {
-	  // debugger;
 	  var col = $col.data("col");
 	  var currentPlayer = this.game.currentPlayer;
 	
@@ -90,7 +89,8 @@
 	  }
 	
 	  var $slot = $col.find("li.empty").last();
-	  $slot.removeClass("empty").addClass(currentPlayer);
+	  var $slots = $col.find("li.empty");
+	  this.dropToken($slot, $slots, currentPlayer);
 	
 	  if (this.game.isOver()) {
 	    this.$el.off("click");
@@ -110,23 +110,48 @@
 	  }
 	};
 	
+	View.prototype.dropToken = function ($slot, $slots, currentPlayer) {
+	  var nextCount = $slots.length - 2;
+	
+	  var i = 0;
+	  var $currentSlot = $slots.first();
+	
+	  $currentSlot.removeClass("empty").addClass(currentPlayer);
+	
+	  setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 70);
+	
+	};
+	
+	View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
+	  if ($currentSlot.next("li").hasClass("empty")) {
+	    $currentSlot.removeClass(currentPlayer).addClass("empty");
+	    $currentSlot  = $currentSlot.next("li");
+	    $currentSlot.removeClass("empty").addClass(currentPlayer);
+	    setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 70);
+	  }
+	};
 	
 	View.prototype.setupBoard = function () {
 	
-	  for (var colIdx = 0; colIdx < 7; colIdx++) {
-	    var $ul = $("<ul>");
+	  var $div = $("<div>");
+	  $div.addClass("board");
 	
-	    $ul.data("col", colIdx);
+	    for (var colIdx = 0; colIdx < 7; colIdx++) {
+	      var $ul = $("<ul>");
 	
-	      for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
-	        var $li = $("<li>");
-	        $li.data("col", [colIdx, rowIdx]);
-	        $li.addClass("empty");
+	      $ul.data("col", colIdx);
 	
-	        $ul.append($li);
-	      }
-	    this.$el.append($ul);
-	  }
+	        for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
+	          var $li = $("<li>");
+	          $li.data("col", [colIdx, rowIdx]);
+	          $li.addClass("empty");
+	
+	          $ul.append($li);
+	        }
+	
+	      $div.append($ul);
+	    }
+	    this.$el.append($div);
 	};
 	
 	
@@ -238,21 +263,6 @@
 	  this.grid[col][rowIdx] = token;
 	};
 	
-	Board.prototype.print = function () {
-	  var strs = [];
-	  for (var colIdx = 0; colIdx < 7; colIdx++) {
-	    var tokens = [];
-	    for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
-	      tokens.push(
-	        this.grid[colIdx][rowIdx] ? this.grid[colIdx][rowIdx] : " "
-	      );
-	    }
-	
-	    strs.push(tokens.join("|") + "\n");
-	  }
-	
-	  console.log(strs.join("-----\n"));
-	};
 	
 	Board.prototype.winner = function () {
 	
@@ -313,6 +323,36 @@
 	    [[3, 5], [4, 5], [5, 5], [6, 5]],
 	    // diagonals
 	    [[0, 0], [1, 1], [2, 2], [3, 3]],
+	    [[1, 1], [2, 2], [3, 3], [4, 4]],
+	    [[2, 2], [3, 3], [4, 4], [5, 5]],
+	    [[1, 0], [2, 1], [3, 2], [4, 3]],
+	    [[2, 1], [3, 2], [4, 3], [5, 4]],
+	    [[3, 2], [4, 3], [5, 4], [6, 5]],
+	
+	    [[6, 0], [5, 1], [4, 2], [3, 3]],
+	    [[5, 1], [4, 2], [3, 3], [2, 4]],
+	    [[4, 2], [3, 3], [2, 4], [1, 5]],
+	    [[5, 0], [4, 1], [3, 2], [2, 3]],
+	    [[4, 1], [3, 2], [2, 3], [1, 4]],
+	    [[3, 2], [2, 3], [1, 4], [0, 5]],
+	
+	    [[2, 0], [3, 1], [4, 2], [5, 3]],
+	    [[3, 1], [4, 2], [5, 3], [6, 4]],
+	    [[3, 0], [4, 1], [5, 2], [6, 3]],
+	
+	    [[4, 0], [3, 1], [2, 2], [1, 3]],
+	    [[3, 1], [2, 2], [1, 3], [0, 4]],
+	    [[3, 0], [2, 1], [1, 2], [0, 3]],
+	
+	    [[0, 1], [1, 2], [2, 3], [3, 4]],
+	    [[1, 2], [2, 3], [3, 4], [0, 1]],
+	    [[0, 2], [1, 3], [2, 4], [3, 5]],
+	
+	    [[2, 5], [3, 4], [4, 3], [5, 2]],
+	    [[3, 4], [4, 3], [5, 2], [6, 1]],
+	    [[3, 5], [4, 4], [5, 3], [6, 2]],
+	
+	
 	  ];
 	
 	    for (var i = 0; i < posSeqs.length; i++) {

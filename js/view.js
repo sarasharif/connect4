@@ -17,7 +17,6 @@ View.prototype.bindEvents = function () {
 };
 
 View.prototype.makeMove = function ($col) {
-  // debugger;
   var col = $col.data("col");
   var currentPlayer = this.game.currentPlayer;
 
@@ -30,7 +29,8 @@ View.prototype.makeMove = function ($col) {
   }
 
   var $slot = $col.find("li.empty").last();
-  $slot.removeClass("empty").addClass(currentPlayer);
+  var $slots = $col.find("li.empty");
+  this.dropToken($slot, $slots, currentPlayer);
 
   if (this.game.isOver()) {
     this.$el.off("click");
@@ -50,23 +50,48 @@ View.prototype.makeMove = function ($col) {
   }
 };
 
+View.prototype.dropToken = function ($slot, $slots, currentPlayer) {
+  var nextCount = $slots.length - 2;
+
+  var i = 0;
+  var $currentSlot = $slots.first();
+
+  $currentSlot.removeClass("empty").addClass(currentPlayer);
+
+  setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 70);
+
+};
+
+View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
+  if ($currentSlot.next("li").hasClass("empty")) {
+    $currentSlot.removeClass(currentPlayer).addClass("empty");
+    $currentSlot  = $currentSlot.next("li");
+    $currentSlot.removeClass("empty").addClass(currentPlayer);
+    setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 70);
+  }
+};
 
 View.prototype.setupBoard = function () {
 
-  for (var colIdx = 0; colIdx < 7; colIdx++) {
-    var $ul = $("<ul>");
+  var $div = $("<div>");
+  $div.addClass("board");
 
-    $ul.data("col", colIdx);
+    for (var colIdx = 0; colIdx < 7; colIdx++) {
+      var $ul = $("<ul>");
 
-      for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
-        var $li = $("<li>");
-        $li.data("col", [colIdx, rowIdx]);
-        $li.addClass("empty");
+      $ul.data("col", colIdx);
 
-        $ul.append($li);
-      }
-    this.$el.append($ul);
-  }
+        for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
+          var $li = $("<li>");
+          $li.data("col", [colIdx, rowIdx]);
+          $li.addClass("empty");
+
+          $ul.append($li);
+        }
+
+      $div.append($ul);
+    }
+    this.$el.append($div);
 };
 
 
