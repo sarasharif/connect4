@@ -13,6 +13,7 @@ View.prototype.bindEvents = function () {
     var $col = $(clicker.currentTarget).parent();
     this.makeMove($col);
 
+
   }).bind(this));
 };
 
@@ -44,6 +45,7 @@ View.prototype.resetGame = function(winner) {
 
 
 View.prototype.makeMove = function ($col) {
+  this.$el.off("click");
   var col = $col.attr("col");
   var currentPlayer = this.game.currentPlayer;
 
@@ -100,8 +102,8 @@ View.prototype.finishMove = function ($col, user, currentPlayer) {
     if (user === "human") {
       setTimeout(this.makeAImove.bind(this), 700);
     } else {
+      this.bindEvents();
       return;
-      // setTimeout(this.bindEvents.bind(this), 500);
     }
   }
 

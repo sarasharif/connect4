@@ -73,6 +73,7 @@
 	    var $col = $(clicker.currentTarget).parent();
 	    this.makeMove($col);
 	
+	
 	  }).bind(this));
 	};
 	
@@ -104,6 +105,7 @@
 	
 	
 	View.prototype.makeMove = function ($col) {
+	  this.$el.off("click");
 	  var col = $col.attr("col");
 	  var currentPlayer = this.game.currentPlayer;
 	
@@ -160,8 +162,8 @@
 	    if (user === "human") {
 	      setTimeout(this.makeAImove.bind(this), 700);
 	    } else {
+	      this.bindEvents();
 	      return;
-	      // setTimeout(this.bindEvents.bind(this), 500);
 	    }
 	  }
 	
