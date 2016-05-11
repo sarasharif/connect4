@@ -9,57 +9,51 @@ var View = function (game, $el) {
 };
 
 View.prototype.bindEvents = function () {
+  console.log("view - bindEvents");
   this.$el.on("click", "li", (function (clicker) {
     var $col = $(clicker.currentTarget).parent();
     this.makeMove($col);
-
-
   }).bind(this));
 };
 
-View.prototype.bindResetEvent = function (winner) {
+View.prototype.bindResetEvent = function () {
+  console.log("view - bindResetEvent");
+  var winner = this.game.winner()[0];
+
   this.$el.on("click", "li", (function (clicker) {
     this.resetGame(winner);
   }).bind(this));
-
-  // this.$el.on("click", "ul", (function (clicker) {
-  //   this.resetGame();
-  // }).bind(this));
-  //
-  // this.$el.on("click", "h1", (function (clicker) {
-  //   this.resetGame();
-  // }).bind(this));
-
 };
 
 View.prototype.resetGame = function(winner) {
+  console.log("view - resetGame:" + winner);
   this.$el.removeClass("winner-" + winner);
   this.$el.prev().removeClass("winner-" + winner);
   this.$el.children("div").remove();
   winner = null;
-  this.$el.off("click");
   this.game = new Game();
   this.setupBoard();
+  this.$el.off("click");
   this.bindEvents();
 };
 
 
 View.prototype.makeMove = function ($col) {
-  this.$el.off("click");
+  console.log("view - makeMove");
   var col = $col.attr("col");
   var currentPlayer = this.game.currentPlayer;
-
   try {
     this.game.playMove(col);
   } catch (e) {
     return;
+  } finally {
+    this.finishMove($col, "human", currentPlayer);
   }
-
-  this.finishMove($col, "human", currentPlayer);
 
 };
 
 View.prototype.makeAImove = function () {
+  console.log("view - makeAImove");
   // this.$el.off("click");
 
 
@@ -71,12 +65,14 @@ View.prototype.makeAImove = function () {
     this.game.playMove(col);
   } catch (e) {
     this.makeAImove();
+  } finally {
+    this.finishMove($col, "computer", currentPlayer);
   }
 
-  this.finishMove($col, "computer", currentPlayer);
 };
 
 View.prototype.finishMove = function ($col, user, currentPlayer) {
+  console.log("view - finishMove");
   var $slots = $col.find("li.empty");
   this.dropToken($slots, currentPlayer);
 
@@ -85,6 +81,7 @@ View.prototype.finishMove = function ($col, user, currentPlayer) {
 
     var winner = this.game.winner()[0];
     var winSeq = this.game.winner()[1];
+    this.bindResetEvent(winner);
 
     if (winner) {
       this.$el.addClass("winner-" + winner);
@@ -96,13 +93,10 @@ View.prototype.finishMove = function ($col, user, currentPlayer) {
       $("li[pos='"+ winSeq[3] +"']").addClass("winners");
     }
 
-    this.bindResetEvent(winner);
-
   } else {
     if (user === "human") {
       setTimeout(this.makeAImove.bind(this), 700);
     } else {
-      this.bindEvents();
       return;
     }
   }
@@ -111,6 +105,7 @@ View.prototype.finishMove = function ($col, user, currentPlayer) {
 
 
 View.prototype.dropToken = function ($slots, currentPlayer) {
+  console.log("view - dropToken");
   var $currentSlot = $slots.first();
   $currentSlot.removeClass("empty").addClass(currentPlayer);
   setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 45);
@@ -119,6 +114,7 @@ View.prototype.dropToken = function ($slots, currentPlayer) {
 };
 
 View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
+  console.log("view - dropAnimation");
   if ($currentSlot.next("li").hasClass("empty")) {
     $currentSlot.removeClass(currentPlayer).addClass("empty");
     $currentSlot  = $currentSlot.next("li");
@@ -128,6 +124,7 @@ View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
 };
 
 View.prototype.setupBoard = function () {
+  console.log("view - setupBoard");
 
   var $div = $("<div>");
   $div.addClass("board");
