@@ -49,8 +49,6 @@ Board.prototype.isOver = function () {
 
 Board.prototype.dropToken = function (col, token) {
 
-  // debugger;
-
   if (!this.isEmptyCol(col)) {
     throw new MoveError("Not an empty column!");
   }
@@ -144,7 +142,7 @@ Board.prototype.winner = function () {
     [[3, 0], [2, 1], [1, 2], [0, 3]],
 
     [[0, 1], [1, 2], [2, 3], [3, 4]],
-    [[1, 2], [2, 3], [3, 4], [0, 1]],
+    [[1, 2], [2, 3], [3, 4], [4, 5]],
     [[0, 2], [1, 3], [2, 4], [3, 5]],
 
     [[2, 5], [3, 4], [4, 3], [5, 2]],
@@ -157,7 +155,7 @@ Board.prototype.winner = function () {
     for (var i = 0; i < posSeqs.length; i++) {
       var winner = this.winnerHelper(posSeqs[i]);
       if (winner !== null) {
-        return winner;
+        return [winner, posSeqs[i]];
       }
     }
   return null;

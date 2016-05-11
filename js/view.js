@@ -30,36 +30,28 @@ View.prototype.makeMove = function ($col) {
 
   var $slot = $col.find("li.empty").last();
   var $slots = $col.find("li.empty");
-  this.dropToken($slot, $slots, currentPlayer);
+  this.dropToken($slots, currentPlayer);
 
   if (this.game.isOver()) {
     this.$el.off("click");
     this.$el.addClass("game-over");
 
-    var winner = this.game.winner();
-    var $figcaption = $("<figcaption>");
+
+    var winner = this.game.winner()[0];
+    var winSeq = this.game.winner()[1];
 
     if (winner) {
       this.$el.addClass("winner-" + winner);
-      $figcaption.html("You win, " + winner + "!");
-    } else {
-      $figcaption.html("It's a draw!");
     }
-
-    this.$el.append($figcaption);
   }
 };
 
-View.prototype.dropToken = function ($slot, $slots, currentPlayer) {
-  var nextCount = $slots.length - 2;
-
-  var i = 0;
+View.prototype.dropToken = function ($slots, currentPlayer) {
   var $currentSlot = $slots.first();
-
   $currentSlot.removeClass("empty").addClass(currentPlayer);
+  setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 45);
 
-  setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 70);
-
+  $slots.last().addClass("animated bounce");
 };
 
 View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
@@ -67,7 +59,7 @@ View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
     $currentSlot.removeClass(currentPlayer).addClass("empty");
     $currentSlot  = $currentSlot.next("li");
     $currentSlot.removeClass("empty").addClass(currentPlayer);
-    setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 70);
+    setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 45);
   }
 };
 
@@ -83,7 +75,7 @@ View.prototype.setupBoard = function () {
 
         for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
           var $li = $("<li>");
-          $li.data("col", [colIdx, rowIdx]);
+          $li.data("pos", [colIdx, rowIdx]);
           $li.addClass("empty");
 
           $ul.append($li);
