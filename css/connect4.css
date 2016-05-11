@@ -7,11 +7,23 @@ html, body, figure, ul, li, h1 {
 }
 
 h1 {
-  padding: 20px;
-  font-size: 110px;
+  padding-top: 40px;
+  padding-bottom: 20px;
+  font-size: 112px;
   text-align: center;
   color: gray;
   font-family: 'Codystar', cursive;
+}
+
+h1.winner-red {
+  color: firebrick;
+  font-weight: bold;
+
+}
+
+h1.winner-blue {
+  color: cadetblue;
+  font-weight: bold;
 }
 
 li {

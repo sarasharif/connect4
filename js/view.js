@@ -41,7 +41,9 @@ View.prototype.makeMove = function ($col) {
     var winSeq = this.game.winner()[1];
 
     if (winner) {
+      // debugger;
       this.$el.addClass("winner-" + winner);
+      this.$el.prev().addClass("winner-" + winner);
     }
   }
 };
