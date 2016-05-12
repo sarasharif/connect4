@@ -69,24 +69,22 @@
 	};
 	
 	View.prototype.bindEvents = function () {
-	  console.log("view - bindEvents");
 	  this.$el.on("click", "li", (function (clicker) {
+	    $('.click-defense').addClass('activated');
 	    var $col = $(clicker.currentTarget).parent();
 	    this.makeMove($col);
 	  }).bind(this));
 	};
 	
 	View.prototype.bindResetEvent = function () {
-	  console.log("view - bindResetEvent");
 	  var winner = this.game.winner()[0];
-	
+	  $('.click-defense').removeClass('activated')
 	  this.$el.on("click", "li", (function (clicker) {
-	    this.resetGame(winner);
+	   this.resetGame(winner);
 	  }).bind(this));
 	};
 	
 	View.prototype.resetGame = function(winner) {
-	  console.log("view - resetGame:" + winner);
 	  this.$el.removeClass("winner-" + winner);
 	  this.$el.prev().removeClass("winner-" + winner);
 	  this.$el.children("div").remove();
@@ -99,7 +97,6 @@
 	
 	
 	View.prototype.makeMove = function ($col) {
-	  console.log("view - makeMove");
 	  var col = $col.attr("col");
 	  var currentPlayer = this.game.currentPlayer;
 	  try {
@@ -113,10 +110,7 @@
 	};
 	
 	View.prototype.makeAImove = function () {
-	  console.log("view - makeAImove");
 	  // this.$el.off("click");
-	
-	
 	  var col = Math.floor(Math.random() * 7);
 	  var currentPlayer = this.game.currentPlayer;
 	  var $col = $("ul[col='"+ col +"']");
@@ -132,9 +126,8 @@
 	};
 	
 	View.prototype.finishMove = function ($col, user, currentPlayer) {
-	  console.log("view - finishMove");
 	  var $slots = $col.find("li.empty");
-	  this.dropToken($slots, currentPlayer);
+	  this.dropToken($slots, user, currentPlayer);
 	
 	  if (this.game.isOver()) {
 	    this.$el.off("click");
@@ -161,31 +154,31 @@
 	    }
 	  }
 	
+	
 	};
 	
 	
-	View.prototype.dropToken = function ($slots, currentPlayer) {
-	  console.log("view - dropToken");
+	View.prototype.dropToken = function ($slots, user, currentPlayer) {
 	  var $currentSlot = $slots.first();
 	  $currentSlot.removeClass("empty").addClass(currentPlayer);
-	  setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 45);
+	  setTimeout(this.dropAnimation.bind(this, $currentSlot, user, currentPlayer), 45);
 	
 	  $slots.last().addClass("animated bounce");
 	};
 	
-	View.prototype.dropAnimation = function ($currentSlot, currentPlayer) {
-	  console.log("view - dropAnimation");
+	View.prototype.dropAnimation = function ($currentSlot, user, currentPlayer) {
 	  if ($currentSlot.next("li").hasClass("empty")) {
 	    $currentSlot.removeClass(currentPlayer).addClass("empty");
 	    $currentSlot  = $currentSlot.next("li");
 	    $currentSlot.removeClass("empty").addClass(currentPlayer);
-	    setTimeout(this.dropAnimation.bind(this, $currentSlot, currentPlayer), 45);
+	    setTimeout(this.dropAnimation.bind(this, $currentSlot, user, currentPlayer), 45);
+	
+	  } else if (user === "computer"){
+	    $('.click-defense').removeClass('activated');
 	  }
 	};
 	
 	View.prototype.setupBoard = function () {
-	  console.log("view - setupBoard");
-	
 	  var $div = $("<div>");
 	  $div.addClass("board");
 	    for (var colIdx = 0; colIdx < 7; colIdx++) {
