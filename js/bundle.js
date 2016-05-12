@@ -59,6 +59,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(2);
+	var aiPlayer = __webpack_require__(5);
 	
 	var View = function (game, $el) {
 	  this.game = game;
@@ -78,7 +79,7 @@
 	
 	View.prototype.bindResetEvent = function () {
 	  var winner = this.game.winner()[0];
-	  $('.click-defense').removeClass('activated')
+	  $('.click-defense').removeClass('activated');
 	  this.$el.on("click", "li", (function (clicker) {
 	   this.resetGame(winner);
 	  }).bind(this));
@@ -109,16 +110,19 @@
 	
 	};
 	
-	View.prototype.makeAImove = function () {
-	  // this.$el.off("click");
-	  var col = Math.floor(Math.random() * 7);
+	View.prototype.getAImove = function () {
+	
 	  var currentPlayer = this.game.currentPlayer;
+	
+	  var col = aiPlayer.makeMove();
+	
+	
 	  var $col = $("ul[col='"+ col +"']");
 	
 	  try {
 	    this.game.playMove(col);
 	  } catch (e) {
-	    this.makeAImove();
+	    this.getAImove();
 	  } finally {
 	    this.finishMove($col, "computer", currentPlayer);
 	  }
@@ -148,7 +152,7 @@
 	
 	  } else {
 	    if (user === "human") {
-	      setTimeout(this.makeAImove.bind(this), 700);
+	      setTimeout(this.getAImove.bind(this), 700);
 	    } else {
 	      return;
 	    }
@@ -439,6 +443,24 @@
 	}
 	
 	module.exports = MoveError;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	
+	
+	function aiPlayer () {
+	
+	}
+	
+	aiPlayer.makeMove = function () {
+	  return Math.floor(Math.random() * 7);
+	};
+	
+	
+	module.exports = aiPlayer;
 
 
 /***/ }
