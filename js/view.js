@@ -1,9 +1,11 @@
 var Game = require("./game");
 var aiPlayer = require("./ai");
+var posSeqs = require("./posSeqs");
 
 var View = function (game, $el) {
   this.game = game;
   this.$el = $el;
+  this.computer = new aiPlayer();
 
   this.setupBoard();
   this.bindEvents();
@@ -40,12 +42,20 @@ View.prototype.resetGame = function(winner) {
 View.prototype.makeMove = function ($col) {
   var col = $col.attr("col");
   var currentPlayer = this.game.currentPlayer;
+  var success = true;
   try {
     this.game.playMove(col);
   } catch (e) {
+    success = false;
+    $('.click-defense').removeClass('activated');
     return;
   } finally {
-    this.finishMove($col, "human", currentPlayer);
+    if (success) {
+      this.finishMove($col, "human", currentPlayer);
+    } else {
+      return;
+    }
+
   }
 
 };
@@ -53,8 +63,7 @@ View.prototype.makeMove = function ($col) {
 View.prototype.getAImove = function () {
 
   var currentPlayer = this.game.currentPlayer;
-
-  var col = aiPlayer.makeMove();
+  var col = this.computer.makeMove(this.game);
 
 
   var $col = $("ul[col='"+ col +"']");

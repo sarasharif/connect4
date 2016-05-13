@@ -59,11 +59,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(2);
-	var aiPlayer = __webpack_require__(5);
+	var aiPlayer = __webpack_require__(6);
+	var posSeqs = __webpack_require__(5);
 	
 	var View = function (game, $el) {
 	  this.game = game;
 	  this.$el = $el;
+	  this.computer = new aiPlayer();
 	
 	  this.setupBoard();
 	  this.bindEvents();
@@ -100,12 +102,20 @@
 	View.prototype.makeMove = function ($col) {
 	  var col = $col.attr("col");
 	  var currentPlayer = this.game.currentPlayer;
+	  var success = true;
 	  try {
 	    this.game.playMove(col);
 	  } catch (e) {
+	    success = false;
+	    $('.click-defense').removeClass('activated');
 	    return;
 	  } finally {
-	    this.finishMove($col, "human", currentPlayer);
+	    if (success) {
+	      this.finishMove($col, "human", currentPlayer);
+	    } else {
+	      return;
+	    }
+	
 	  }
 	
 	};
@@ -113,8 +123,7 @@
 	View.prototype.getAImove = function () {
 	
 	  var currentPlayer = this.game.currentPlayer;
-	
-	  var col = aiPlayer.makeMove();
+	  var col = this.computer.makeMove(this.game);
 	
 	
 	  var $col = $("ul[col='"+ col +"']");
@@ -245,6 +254,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var MoveError = __webpack_require__(4);
+	var posSeqs = __webpack_require__(5);
 	
 	function Board () {
 	  this.grid = Board.makeGrid();
@@ -309,95 +319,6 @@
 	
 	Board.prototype.winner = function () {
 	
-	  var posSeqs = [
-	    // horizontals
-	    [[0, 0], [0, 1], [0, 2], [0, 3]],
-	    [[1, 0], [1, 1], [1, 2], [1, 3]],
-	    [[2, 0], [2, 1], [2, 2], [2, 3]],
-	    [[3, 0], [3, 1], [3, 2], [3, 3]],
-	    [[4, 0], [4, 1], [4, 2], [4, 3]],
-	    [[5, 0], [5, 1], [5, 2], [5, 3]],
-	    [[6, 0], [6, 1], [6, 2], [6, 3]],
-	
-	    [[0, 1], [0, 2], [0, 3], [0, 4]],
-	    [[1, 1], [1, 2], [1, 3], [1, 4]],
-	    [[2, 1], [2, 2], [2, 3], [2, 4]],
-	    [[3, 1], [3, 2], [3, 3], [3, 4]],
-	    [[4, 1], [4, 2], [4, 3], [4, 4]],
-	    [[5, 1], [5, 2], [5, 3], [5, 4]],
-	    [[6, 1], [6, 2], [6, 3], [6, 4]],
-	
-	    [[0, 2], [0, 3], [0, 4], [0, 5]],
-	    [[1, 2], [1, 3], [1, 4], [1, 5]],
-	    [[2, 2], [2, 3], [2, 4], [2, 5]],
-	    [[3, 2], [3, 3], [3, 4], [3, 5]],
-	    [[4, 2], [4, 3], [4, 4], [4, 5]],
-	    [[5, 2], [5, 3], [5, 4], [5, 5]],
-	    [[6, 2], [6, 3], [6, 4], [6, 5]],
-	    // verticals
-	    [[0, 0], [1, 0], [2, 0], [3, 0]],
-	    [[1, 0], [2, 0], [3, 0], [4, 0]],
-	    [[2, 0], [3, 0], [4, 0], [5, 0]],
-	    [[3, 0], [4, 0], [5, 0], [6, 0]],
-	
-	    [[0, 1], [1, 1], [2, 1], [3, 1]],
-	    [[1, 1], [2, 1], [3, 1], [4, 1]],
-	    [[2, 1], [3, 1], [4, 1], [5, 1]],
-	    [[3, 1], [4, 1], [5, 1], [6, 1]],
-	
-	    [[0, 2], [1, 2], [2, 2], [3, 2]],
-	    [[1, 2], [2, 2], [3, 2], [4, 2]],
-	    [[2, 2], [3, 2], [4, 2], [5, 2]],
-	    [[3, 2], [4, 2], [5, 2], [6, 2]],
-	
-	    [[0, 3], [1, 3], [2, 3], [3, 3]],
-	    [[1, 3], [2, 3], [3, 3], [4, 3]],
-	    [[2, 3], [3, 3], [4, 3], [5, 3]],
-	    [[3, 3], [4, 3], [5, 3], [6, 3]],
-	
-	    [[0, 4], [1, 4], [2, 4], [3, 4]],
-	    [[1, 4], [2, 4], [3, 4], [4, 4]],
-	    [[2, 4], [3, 4], [4, 4], [5, 4]],
-	    [[3, 4], [4, 4], [5, 4], [6, 4]],
-	
-	    [[0, 5], [1, 5], [2, 5], [3, 5]],
-	    [[1, 5], [2, 5], [3, 5], [4, 5]],
-	    [[2, 5], [3, 5], [4, 5], [5, 5]],
-	    [[3, 5], [4, 5], [5, 5], [6, 5]],
-	    // diagonals
-	    [[0, 0], [1, 1], [2, 2], [3, 3]],
-	    [[1, 1], [2, 2], [3, 3], [4, 4]],
-	    [[2, 2], [3, 3], [4, 4], [5, 5]],
-	    [[1, 0], [2, 1], [3, 2], [4, 3]],
-	    [[2, 1], [3, 2], [4, 3], [5, 4]],
-	    [[3, 2], [4, 3], [5, 4], [6, 5]],
-	
-	    [[6, 0], [5, 1], [4, 2], [3, 3]],
-	    [[5, 1], [4, 2], [3, 3], [2, 4]],
-	    [[4, 2], [3, 3], [2, 4], [1, 5]],
-	    [[5, 0], [4, 1], [3, 2], [2, 3]],
-	    [[4, 1], [3, 2], [2, 3], [1, 4]],
-	    [[3, 2], [2, 3], [1, 4], [0, 5]],
-	
-	    [[2, 0], [3, 1], [4, 2], [5, 3]],
-	    [[3, 1], [4, 2], [5, 3], [6, 4]],
-	    [[3, 0], [4, 1], [5, 2], [6, 3]],
-	
-	    [[4, 0], [3, 1], [2, 2], [1, 3]],
-	    [[3, 1], [2, 2], [1, 3], [0, 4]],
-	    [[3, 0], [2, 1], [1, 2], [0, 3]],
-	
-	    [[0, 1], [1, 2], [2, 3], [3, 4]],
-	    [[1, 2], [2, 3], [3, 4], [4, 5]],
-	    [[0, 2], [1, 3], [2, 4], [3, 5]],
-	
-	    [[2, 5], [3, 4], [4, 3], [5, 2]],
-	    [[3, 4], [4, 3], [5, 2], [6, 1]],
-	    [[3, 5], [4, 4], [5, 3], [6, 2]],
-	
-	
-	  ];
-	
 	    for (var i = 0; i < posSeqs.length; i++) {
 	      var winner = this.winnerHelper(posSeqs[i]);
 	      if (winner !== null) {
@@ -449,15 +370,181 @@
 /* 5 */
 /***/ function(module, exports) {
 
+	module.exports = [
+	  // horizontals
+	  [[0, 0], [0, 1], [0, 2], [0, 3]],
+	  [[1, 0], [1, 1], [1, 2], [1, 3]],
+	  [[2, 0], [2, 1], [2, 2], [2, 3]],
+	  [[3, 0], [3, 1], [3, 2], [3, 3]],
+	  [[4, 0], [4, 1], [4, 2], [4, 3]],
+	  [[5, 0], [5, 1], [5, 2], [5, 3]],
+	  [[6, 0], [6, 1], [6, 2], [6, 3]],
 	
+	  [[0, 1], [0, 2], [0, 3], [0, 4]],
+	  [[1, 1], [1, 2], [1, 3], [1, 4]],
+	  [[2, 1], [2, 2], [2, 3], [2, 4]],
+	  [[3, 1], [3, 2], [3, 3], [3, 4]],
+	  [[4, 1], [4, 2], [4, 3], [4, 4]],
+	  [[5, 1], [5, 2], [5, 3], [5, 4]],
+	  [[6, 1], [6, 2], [6, 3], [6, 4]],
+	
+	  [[0, 2], [0, 3], [0, 4], [0, 5]],
+	  [[1, 2], [1, 3], [1, 4], [1, 5]],
+	  [[2, 2], [2, 3], [2, 4], [2, 5]],
+	  [[3, 2], [3, 3], [3, 4], [3, 5]],
+	  [[4, 2], [4, 3], [4, 4], [4, 5]],
+	  [[5, 2], [5, 3], [5, 4], [5, 5]],
+	  [[6, 2], [6, 3], [6, 4], [6, 5]],
+	  // verticals
+	  [[0, 0], [1, 0], [2, 0], [3, 0]],
+	  [[1, 0], [2, 0], [3, 0], [4, 0]],
+	  [[2, 0], [3, 0], [4, 0], [5, 0]],
+	  [[3, 0], [4, 0], [5, 0], [6, 0]],
+	
+	  [[0, 1], [1, 1], [2, 1], [3, 1]],
+	  [[1, 1], [2, 1], [3, 1], [4, 1]],
+	  [[2, 1], [3, 1], [4, 1], [5, 1]],
+	  [[3, 1], [4, 1], [5, 1], [6, 1]],
+	
+	  [[0, 2], [1, 2], [2, 2], [3, 2]],
+	  [[1, 2], [2, 2], [3, 2], [4, 2]],
+	  [[2, 2], [3, 2], [4, 2], [5, 2]],
+	  [[3, 2], [4, 2], [5, 2], [6, 2]],
+	
+	  [[0, 3], [1, 3], [2, 3], [3, 3]],
+	  [[1, 3], [2, 3], [3, 3], [4, 3]],
+	  [[2, 3], [3, 3], [4, 3], [5, 3]],
+	  [[3, 3], [4, 3], [5, 3], [6, 3]],
+	
+	  [[0, 4], [1, 4], [2, 4], [3, 4]],
+	  [[1, 4], [2, 4], [3, 4], [4, 4]],
+	  [[2, 4], [3, 4], [4, 4], [5, 4]],
+	  [[3, 4], [4, 4], [5, 4], [6, 4]],
+	
+	  [[0, 5], [1, 5], [2, 5], [3, 5]],
+	  [[1, 5], [2, 5], [3, 5], [4, 5]],
+	  [[2, 5], [3, 5], [4, 5], [5, 5]],
+	  [[3, 5], [4, 5], [5, 5], [6, 5]],
+	  // diagonals
+	  [[0, 0], [1, 1], [2, 2], [3, 3]],
+	  [[1, 1], [2, 2], [3, 3], [4, 4]],
+	  [[2, 2], [3, 3], [4, 4], [5, 5]],
+	  [[1, 0], [2, 1], [3, 2], [4, 3]],
+	  [[2, 1], [3, 2], [4, 3], [5, 4]],
+	  [[3, 2], [4, 3], [5, 4], [6, 5]],
+	
+	  [[6, 0], [5, 1], [4, 2], [3, 3]],
+	  [[5, 1], [4, 2], [3, 3], [2, 4]],
+	  [[4, 2], [3, 3], [2, 4], [1, 5]],
+	  [[5, 0], [4, 1], [3, 2], [2, 3]],
+	  [[4, 1], [3, 2], [2, 3], [1, 4]],
+	  [[3, 2], [2, 3], [1, 4], [0, 5]],
+	
+	  [[2, 0], [3, 1], [4, 2], [5, 3]],
+	  [[3, 1], [4, 2], [5, 3], [6, 4]],
+	  [[3, 0], [4, 1], [5, 2], [6, 3]],
+	
+	  [[4, 0], [3, 1], [2, 2], [1, 3]],
+	  [[3, 1], [2, 2], [1, 3], [0, 4]],
+	  [[3, 0], [2, 1], [1, 2], [0, 3]],
+	
+	  [[0, 1], [1, 2], [2, 3], [3, 4]],
+	  [[1, 2], [2, 3], [3, 4], [4, 5]],
+	  [[0, 2], [1, 3], [2, 4], [3, 5]],
+	
+	  [[2, 5], [3, 4], [4, 3], [5, 2]],
+	  [[3, 4], [4, 3], [5, 2], [6, 1]],
+	  [[3, 5], [4, 4], [5, 3], [6, 2]],
+	
+	
+	];
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var posSeqs = __webpack_require__(5);
 	
 	function aiPlayer () {
-	
+	  this.posSeqs = posSeqs;
 	}
 	
-	aiPlayer.makeMove = function () {
-	  return Math.floor(Math.random() * 7);
+	aiPlayer.prototype.makeMove = function (game) {
+	  this.grid = game.board.grid;
+	  if (this.makeWinningMove()) {
+	    return this.makeWinningMove() - 1;
+	  } else if (this.makeDefensiveMove()) {
+	    return this.makeDefensiveMove() - 1;
+	  } else {
+	    return this.makeRandomMove() - 1;
+	  }
 	};
+	
+	aiPlayer.prototype.makeWinningMove = function () {
+	
+	  var contains3of4 = [];
+	
+	  for (var i = 0; i < this.posSeqs.length; i++) {
+	    var curSeq = this.posSeqs[i]; var count = 0;
+	    for (var j = 0; j < 4; j++) {
+	      if (this.grid[curSeq[j][0]][curSeq[j][1]] === "blue") {
+	        count++;
+	        if (count === 3) {
+	          contains3of4.push(curSeq);
+	        }
+	      }
+	    }
+	  }
+	
+	  for (var i = 0; i < contains3of4.length; i++ ) {
+	    var curSeq = contains3of4[i]; var that = this;
+	    var curSeqcolors = curSeq.map(function (el) {
+	      return that.grid[el[0]][el[1]];
+	    });
+	    var fourth = curSeqcolors.indexOf(null);
+	    if (fourth > -1 && this.isAvailableSlot(curSeq[fourth]))  {
+	      return curSeq[fourth][0] + 1;
+	    }
+	  }
+	};
+	
+	aiPlayer.prototype.isAvailableSlot = function (pos) {
+	  return (pos[1] === 5 || this.grid[pos[0]][pos[1]+1] !== null);
+	};
+	
+	aiPlayer.prototype.makeDefensiveMove = function () {
+	  var contains3of4 = [];
+	
+	  for (var i = 0; i < this.posSeqs.length; i++) {
+	    var curSeq = this.posSeqs[i]; var count = 0;
+	    for (var j = 0; j < 4; j++) {
+	      if (this.grid[curSeq[j][0]][curSeq[j][1]] === "red") {
+	        count++;
+	        if (count === 3) {
+	          contains3of4.push(curSeq);
+	        }
+	      }
+	    }
+	  }
+	
+	  for (var i = 0; i < contains3of4.length; i++ ) {
+	    var curSeq = contains3of4[i]; var that = this;
+	    var curSeqcolors = curSeq.map(function (el) {
+	      return that.grid[el[0]][el[1]];
+	    });
+	    var fourth = curSeqcolors.indexOf(null);
+	    if (fourth > -1 && this.isAvailableSlot(curSeq[fourth]))  {
+	      return curSeq[fourth][0] + 1;
+	    }
+	  }
+	};
+	
+	aiPlayer.prototype.makeRandomMove = function () {
+	  return Math.floor(Math.random() * 7) + 1;
+	};
+	
+	
 	
 	
 	module.exports = aiPlayer;
