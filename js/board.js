@@ -33,6 +33,11 @@ Board.prototype.isEmptyCol = function (col) {
 
   return (this.grid[col][0] === null);
 };
+// 
+// Board.prototype.openRow = function (col) {
+//   this.grid[col].each
+//
+// };
 
 Board.prototype.isOver = function () {
   if (this.winner() !== null) {
