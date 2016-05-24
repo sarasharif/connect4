@@ -76,14 +76,16 @@ ul {
 }
 
 .board {
-  width: 100vw;
+  width: 462px;
   height: 80vh;
-  /*padding-top: 100px;*/
-  position: absolute;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-content: center;
+  margin: auto;
+  position: fixed;
+  left: 50%;
+  margin-left: -231px;
 }
 
 .connect4 {
