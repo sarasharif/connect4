@@ -77,7 +77,7 @@ ul {
 
 .board {
   width: 462px;
-  height: 80vh;
+  height: 75vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
