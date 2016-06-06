@@ -31,8 +31,8 @@ aiPlayer.prototype.makeWinningMove = function () {
     }
   }
 
-  for (var i = 0; i < contains3of4.length; i++ ) {
-    var curSeq = contains3of4[i]; var that = this;
+  for (var k = 0; k < contains3of4.length; k++ ) {
+    var curSeq = contains3of4[k]; var that = this;
     var curSeqcolors = curSeq.map(function (el) {
       return that.grid[el[0]][el[1]];
     });

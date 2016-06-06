@@ -59,8 +59,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Game = __webpack_require__(2);
-	var aiPlayer = __webpack_require__(6);
-	var posSeqs = __webpack_require__(5);
+	var aiPlayer = __webpack_require__(5);
+	var posSeqs = __webpack_require__(4);
 	
 	var View = function (game, $el) {
 	  this.game = game;
@@ -153,10 +153,9 @@
 	      this.$el.addClass("winner-" + winner);
 	      this.$el.prev().addClass("winner-" + winner);
 	
-	      $("li[pos='"+ winSeq[0] +"']").addClass("winners");
-	      $("li[pos='"+ winSeq[1] +"']").addClass("winners");
-	      $("li[pos='"+ winSeq[2] +"']").addClass("winners");
-	      $("li[pos='"+ winSeq[3] +"']").addClass("winners");
+	      for (var i = 0; i < winSeq.length; i++) {
+	        $("li[pos='"+ winSeq[i] +"']").addClass("winners");
+	      }
 	    }
 	
 	  } else {
@@ -218,7 +217,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Board = __webpack_require__(3);
-	var MoveError = __webpack_require__(4);
 	
 	function Game () {
 	  this.board = new Board();
@@ -253,8 +251,7 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var MoveError = __webpack_require__(4);
-	var posSeqs = __webpack_require__(5);
+	var posSeqs = __webpack_require__(4);
 	
 	function Board () {
 	  this.grid = Board.makeGrid();
@@ -318,16 +315,20 @@
 	
 	
 	Board.prototype.winner = function () {
-	
-	    for (var i = 0; i < posSeqs.length; i++) {
-	      var winner = this.winnerHelper(posSeqs[i]);
-	      if (winner !== null) {
-	        winSeq = posSeqs[i].map(function(tuple) {
-	          return tuple.toString();
-	        });
-	        return [winner, winSeq];
-	      }
+	  var winSeqs = []; var winner = null;
+	  for (var i = 0; i < posSeqs.length; i++) {
+	    winner = this.winnerHelper(posSeqs[i]);
+	    if (winner !== null) {
+	      var winSeqArray = posSeqs[i];
+	      winSeqString = posSeqs[i].map(function(tuple) {
+	        return tuple.toString();
+	      });
+	      winSeqs = winSeqs.concat(winSeqString);
 	    }
+	  }
+	  if (winSeqs.length > 0) {
+	    return [this.winnerHelper(winSeqArray), winSeqs];
+	  }
 	  return null;
 	};
 	
@@ -357,17 +358,6 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
-
-	function MoveError (msg) {
-	  this.msg = msg;
-	}
-	
-	module.exports = MoveError;
-
-
-/***/ },
-/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -461,10 +451,10 @@
 
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var posSeqs = __webpack_require__(5);
+	var posSeqs = __webpack_require__(4);
 	
 	function aiPlayer () {
 	  this.posSeqs = posSeqs;
@@ -497,8 +487,8 @@
 	    }
 	  }
 	
-	  for (var i = 0; i < contains3of4.length; i++ ) {
-	    var curSeq = contains3of4[i]; var that = this;
+	  for (var k = 0; k < contains3of4.length; k++ ) {
+	    var curSeq = contains3of4[k]; var that = this;
 	    var curSeqcolors = curSeq.map(function (el) {
 	      return that.grid[el[0]][el[1]];
 	    });

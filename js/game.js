@@ -1,5 +1,4 @@
 var Board = require("./board");
-var MoveError = require("./moveError");
 
 function Game () {
   this.board = new Board();

@@ -93,10 +93,9 @@ View.prototype.finishMove = function ($col, user, currentPlayer) {
       this.$el.addClass("winner-" + winner);
       this.$el.prev().addClass("winner-" + winner);
 
-      $("li[pos='"+ winSeq[0] +"']").addClass("winners");
-      $("li[pos='"+ winSeq[1] +"']").addClass("winners");
-      $("li[pos='"+ winSeq[2] +"']").addClass("winners");
-      $("li[pos='"+ winSeq[3] +"']").addClass("winners");
+      for (var i = 0; i < winSeq.length; i++) {
+        $("li[pos='"+ winSeq[i] +"']").addClass("winners");
+      }
     }
 
   } else {

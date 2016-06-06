@@ -1,4 +1,3 @@
-var MoveError = require("./moveError");
 var posSeqs = require("./posSeqs");
 
 function Board () {
@@ -33,11 +32,6 @@ Board.prototype.isEmptyCol = function (col) {
 
   return (this.grid[col][0] === null);
 };
-// 
-// Board.prototype.openRow = function (col) {
-//   this.grid[col].each
-//
-// };
 
 Board.prototype.isOver = function () {
   if (this.winner() !== null) {
@@ -68,16 +62,20 @@ Board.prototype.dropToken = function (col, token) {
 
 
 Board.prototype.winner = function () {
-
-    for (var i = 0; i < posSeqs.length; i++) {
-      var winner = this.winnerHelper(posSeqs[i]);
-      if (winner !== null) {
-        winSeq = posSeqs[i].map(function(tuple) {
-          return tuple.toString();
-        });
-        return [winner, winSeq];
-      }
+  var winSeqs = []; var winner = null;
+  for (var i = 0; i < posSeqs.length; i++) {
+    winner = this.winnerHelper(posSeqs[i]);
+    if (winner !== null) {
+      var winSeqArray = posSeqs[i];
+      winSeqString = posSeqs[i].map(function(tuple) {
+        return tuple.toString();
+      });
+      winSeqs = winSeqs.concat(winSeqString);
     }
+  }
+  if (winSeqs.length > 0) {
+    return [this.winnerHelper(winSeqArray), winSeqs];
+  }
   return null;
 };
 
